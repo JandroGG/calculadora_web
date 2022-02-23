@@ -1,0 +1,59 @@
+body{
+    margin: auto;
+    padding-top: 50px;
+    background-color: rgb(80, 86, 138);
+}
+
+p{
+    font-weight:bold;
+    text-align: end;
+}
+
+#titulo{
+
+    border: 2px solid #000000;
+    width: fit-content;
+    padding: 5px;
+    background-color:burlywood;
+    float: left;
+
+}
+
+#myCanvas{
+    background-color: rgb(231, 233, 248);
+    border: 2px solid #000000;
+    border-radius: 5px;
+}
+
+td{
+    background-color: black;
+}
+
+#teclado{
+    width: 3px;
+    border-radius: 2px;
+}
+
+#calculadora{
+    border: black 3px solid;
+    width: fit-content;
+    background-color: #0c8168;
+    /* text-align: center; */
+    margin-left: 500px;
+    border-radius: 6px;
+    padding: 3px;
+
+}
+
+input{
+    width: 72px;
+    height: 30px;
+    color: darkblue;
+    background-color: gainsboro;
+    font-weight:bold;
+}
+
+#Reset{
+    background-color: rgba(211, 37, 7, 0.966);
+    color: aliceblue;
+}

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Web</title>
+    <link rel="stylesheet" href="cssCalc.css"/>
+</head>
+<body>
+    <div id="calculadora">
+        <h3 id="titulo">CasiCasio</h3><p>3000</p>
+        <canvas id="myCanvas" width="300" height="200">
+            Your browser does not support the canvas element.
+        </canvas>
+        <table id="teclado">
+            <tr>
+                <td><input type="button" value="Up" id="Up"></td>
+                <td><input type="button" value="Dwn" id="Dwn"></td>
+                <td><input type="button" value="Ok" id="Ok"></td>
+                <td><input type="button" value="Esc" id="Esc"></td>
+            </tr>
+            <tr>
+                <td><input type="button" value="Mr" id="mRcall" onclick="reCall()"></td>
+                <td><input type="button" value="M+" id="mPlus" onclick="mplus()"></td>
+                <td><input type="button" value="M-" id="mMinus" onclick="mMinus()"></td>
+                <td><input type="button" value="AC" id="Reset" onclick="reset()"></td>
+            </tr>
+            <tr>
+                <td><input type="button" value="Sqrt" id="sqrt"></td>
+                <td><input type="button" value="Sqr" id="sqr"></td>
+                <td><input type="button" value="1/x" id="inv"></td>
+                <td><input type="button" value="f(x)" id="func" onclick="graphs()"></td>
+            </tr>
+            <tr>
+                <td><input type="button" value="7" id="numero7"></td>
+                <td><input type="button" value="8" id="numero8"></td>
+                <td><input type="button" value="9" id="numero9"></td>
+                <td><input type="button" value="/" id="dividir"></td>
+            </tr>
+            <tr>
+                <td><input type="button" value="4" id="numero4"></td>
+                <td><input type="button" value="5" id="numero5"></td>
+                <td><input type="button" value="6" id="numero6"></td>
+                <td><input type="button" value="*" id="multiplicar"></td>
+            </tr>
+            <tr>
+                <td><input type="button" value="1" id="numero1"></td>
+                <td><input type="button" value="2" id="numero2"></td>
+                <td><input type="button" value="3" id="numero3"></td>
+                <td><input type="button" value="-" id="restar"></td>
+            </tr>
+            <tr>
+                <td><input type="button" value="0" id="numero0"></td>
+                <td><input type="button" value="." id="punto"></td>
+                <td><input type="button" value="=" id="igual"></td>
+                <td><input type="button" value="+" id="sumar"></td>
+            </tr>
+        </table>
+    </div>
+
+
+
+    <script src="jsCalc.js" ></script>
+</body>
+</html>
