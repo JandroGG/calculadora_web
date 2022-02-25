@@ -6,6 +6,19 @@ var dividiendo = false;
 var numero_en_pantalla = "";
 var salir = false;
 var pelotaY = 40;
+// 
+var scaleMultiplier = 0.8;
+var startDragOffset = {};
+var mouseDown = false;
+var scale = 1.0;
+var translatePos = {
+    x: 0,
+    y: 0
+};
+
+var isDraw = false;
+
+//   
 
 function print(numero){
 
@@ -107,6 +120,10 @@ function inversa(){
     }
     else{
         resultado = 1/parseFloat(numero_en_pantalla);
+        let entero = esEntero(resultado);
+        if(!entero){
+            resultado = resultado.toFixed(8);
+        }
         numero_en_pantalla = String(resultado);
         resultado = 0;
         print_total(numero_en_pantalla);
@@ -159,14 +176,18 @@ function total(){
 
 function reset(){
     activar_teclado_calculadora();
+    let ides = ["mousedown","mouseup","mouseover","mouseout","mousemove"];
+    let funciones = [mouse_down, mouse_up, mouse_over, mouse_out, mouse_move];
 
+    for(let i=0; i<ides.length; i++){
+        document.getElementById("myCanvas").removeEventListener( ides[i] , funciones[i], false);
+    }
 
-
-    document.getElementById("myCanvas").removeEventListener("mousemove", coordenadas);
-    document.getElementById("Up").removeEventListener("click", up, false);
-    document.getElementById("Dwn").removeEventListener("click", down, false);
-    document.getElementById("Ok").removeEventListener("click", okey, false);
-    document.getElementById("Esc").removeEventListener("click", esc, false);
+    ides = ["Up","Dwn","Ok","Esc", "mas", "menos"];
+    funciones = [up, down, okey, esc, aumentar, disminuir];
+    for(let i=0; i<ides.length; i++){
+        document.getElementById(ides[i]).removeEventListener( "click" , funciones[i], false);
+    }
     
 
     let canvas = document.getElementById("myCanvas");
@@ -206,16 +227,29 @@ function _init(){
 
 }
 
-function graphs(){
+function _initGraphs(){
+
     desactivar_teclado_calculadora();
+
+    let ides = ["mousedown","mouseup","mouseover","mouseout","mousemove"];
+    let funciones = [mouse_down, mouse_up, mouse_over, mouse_out, mouse_move];
+
+    for(let i=0; i<ides.length; i++){
+        document.getElementById("myCanvas").addEventListener( ides[i] , funciones[i], false);
+    }
+
+    ides = ["Up","Dwn","Ok","Esc", "mas", "menos"];
+    funciones = [up, down, okey, esc, aumentar, disminuir]; //, arriba, abajo, derecha, izquierda];
+
+    for(let i=0; i<ides.length; i++){
+        document.getElementById(ides[i]).addEventListener( "click" , funciones[i], false);
+    }
+    graphs();
+}
+
+function graphs(){
     let canvas = document.getElementById("myCanvas");
     let ctx = canvas.getContext("2d");
-
-    document.getElementById("myCanvas").addEventListener("mousemove", coordenadas, false);
-    document.getElementById("Up").addEventListener("click", up, false);
-    document.getElementById("Dwn").addEventListener("click", down, false);
-    document.getElementById("Ok").addEventListener("click", okey, false);
-    document.getElementById("Esc").addEventListener("click", esc, false);
 
     // canvas.style.cursor="crosshair";
 
@@ -240,38 +274,43 @@ function graphs(){
 
 function esc(){
     pelotaY = 40;
+    isDraw = false;
     graphs();
 
 }
 
 
 
-function coordenadas(posicion){
+function coord(posicion){
     let coordenadas_en_pantalla = 0;
     let canvas = document.getElementById("myCanvas");
     let ctx = canvas.getContext("2d");
 
-    coordX = (posicion.pageX - canvas.offsetLeft);
-    coordY = (posicion.pageY - canvas.offsetTop);
 
-    ctx.fillStyle = "rgb(231, 233, 248)";           //borra
-    ctx.fillRect(150, 184, 292, 14);
 
-    if(pelotaY == 40 || pelotaY == 60){
-        coordenadas_en_pantalla = "(" + ((coordX-150)/20) + ", " + (((coordY-100)/50)*-1) + ")";
-    }
-    else if(pelotaY == 80){
-        coordenadas_en_pantalla = "(" + ((coordX-152)/6).toFixed(2) + ", " + ((coordY-180)*-1) + ")";
-    }
-    else{
-        coordenadas_en_pantalla = "(" + coordX + ", " + coordY + ")";
-        
-    }
 
-    ctx.fillStyle = "black";                        //refresca
-    ctx.font = '15px serif';
-    let text = ctx.measureText(coordenadas_en_pantalla);
-    ctx.fillText(coordenadas_en_pantalla, 295 - text.width, 195); 
+
+
+    // coordX = (posicion.pageX - canvas.offsetLeft);
+    // coordY = (posicion.pageY - canvas.offsetTop);
+
+    // ctx.fillStyle = "rgb(231, 233, 248)";           //borra
+    // ctx.fillRect(150, 184, 292, 14);
+
+    // if(pelotaY == 40 || pelotaY == 60){
+    //     coordenadas_en_pantalla = "(" + ((coordX-150)/20) + ", " + (((coordY-100)/50)*-1) + ")";
+    // }
+    // else if(pelotaY == 80){
+    //     coordenadas_en_pantalla = "(" + ((coordX-152)/6).toFixed(2) + ", " + ((coordY-180)*-1) + ")";
+    // }
+    // else{
+    // //     coordenadas_en_pantalla = "(" + coordX + ", " + coordY + ")";   
+    // // }
+
+    // ctx.fillStyle = "black";                        //refresca
+    // ctx.font = '15px serif';
+    // let text = ctx.measureText(coordenadas_en_pantalla);
+    // ctx.fillText(coordenadas_en_pantalla, 295 - text.width, 195); 
 
 }
 
@@ -309,25 +348,29 @@ function dibujar_pelota(){
 
 function okey(){
     if(pelotaY == 40){
-        funcion_sin();
+        funcion_sin(scale, translatePos);
     }
     else if(pelotaY == 60){
-        funcion_cos();
+        funcion_cos(scale, translatePos);
     }
     else if(pelotaY == 80){
-        funcion_pow();
+        funcion_pow(scale, translatePos);
     }
     else{
         alert('Error!! revisar la variable pelotaY');
     }
 }
 
-function funcion_sin(){
+function funcion_sin(scale, translatePos){
     let y = 0;
     let canvas = document.getElementById("myCanvas");
     let ctx = canvas.getContext("2d");
-    ctx.fillStyle = "rgb(231, 233, 248)";
-    ctx.fillRect(5, 5, 292, 195);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+
+    ctx.translate(translatePos.x, translatePos.y);
+    ctx.scale(scale, scale);
 
    // ejes coordenados para la funcion sin(x) y cos(x)
    ctx.beginPath();
@@ -358,19 +401,26 @@ function funcion_sin(){
    ctx.closePath();
    ctx.stroke();
    // graficar funcion sin(x):
-   for(let i=-7; i<7;i+=0.01){
+   for(let i=-20; i<20;i+=0.01){
        y = Math.sin(i);
        ctx.fillStyle = "rgba(0, 0, 0, 1)";
        ctx.fillRect(150 + (20.4*i), (100 - (50*y)), 1, 1); 
    }
+   ctx.restore();
+
+   isDraw = true;
 }
 
 function funcion_cos(){
     let y = 0;
     let canvas = document.getElementById("myCanvas");
     let ctx = canvas.getContext("2d");
-    ctx.fillStyle = "rgb(231, 233, 248)";
-    ctx.fillRect(5, 5, 292, 195);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+
+    ctx.translate(translatePos.x, translatePos.y);
+    ctx.scale(scale, scale);
 
    // ejes coordenados para la funcion sin(x) y cos(x)
    ctx.beginPath();
@@ -405,14 +455,21 @@ function funcion_cos(){
        ctx.fillStyle = "rgba(0, 0, 0, 1)";
        ctx.fillRect(150 + (20.4*i), (100 - (50*y)), 1, 1); 
    }
+   ctx.restore();
+   isDraw = true;
 }
 
 function funcion_pow(){
     let y = 0;
     let canvas = document.getElementById("myCanvas");
     let ctx = canvas.getContext("2d");
-    ctx.fillStyle = "rgb(231, 233, 248)";
-    ctx.fillRect(5, 5, 292, 195);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+
+    ctx.translate(translatePos.x, translatePos.y);
+    ctx.scale(scale, scale);
+    
     ctx.beginPath();
     ctx.moveTo(150, 5);
     ctx.lineTo(150, 195);
@@ -426,17 +483,15 @@ function funcion_pow(){
        ctx.fillStyle = "rgba(0, 0, 0, 1)";
        ctx.fillRect(150 + (i*6), (180 - y), 2, 2); 
    }
-   console.log(pelotaY);
+   ctx.restore();
+   isDraw = true;
 }
 
-function atras(){
+// function atras(){
+//     salir = true;
+// }
 
-    salir = true;
-    
 
-}
-
-window.addEventListener( "load" , _init, false);
 
 function activar_teclado_calculadora(){
 
@@ -484,3 +539,81 @@ function print_2(){
 }function print_punto(){
     print('.');
 }
+
+// funciones del evento draguear la imagen
+function mouse_down(evt){
+    mouseDown = true;
+    startDragOffset.x = evt.clientX - translatePos.x;
+    startDragOffset.y = evt.clientY - translatePos.y;
+}
+
+function mouse_up(){
+    mouseDown = false;
+}
+
+function mouse_over(){
+    mouseDown = false;
+}
+
+ function mouse_out(){
+    mouseDown = false;
+}
+
+function mouse_move(evt){
+    if (mouseDown && isDraw) {
+        translatePos.x = evt.clientX - startDragOffset.x;
+        translatePos.y = evt.clientY - startDragOffset.y;
+        if(pelotaY == 40){
+            funcion_sin(scale, translatePos);
+        }
+        else if(pelotaY == 60){
+            funcion_cos(scale, translatePos);
+        }
+        else if(pelotaY == 80){
+            funcion_pow(scale, translatePos);
+        }
+        else{
+            alert('Error!! revisar la variable pelotaY');
+        }
+    } 
+}
+
+// funciones para hacer zoom
+function aumentar(){
+    if(isDraw){
+        scale *=1.2;
+        if(pelotaY == 40){
+            funcion_sin(scale, translatePos);
+        }
+        else if(pelotaY == 60){
+            funcion_cos(scale, translatePos);
+        }
+        else if(pelotaY == 80){
+            funcion_pow(scale, translatePos);
+        }
+        else{
+            alert('Error!! revisar la variable pelotaY');
+        }
+    }
+}
+
+function disminuir(){
+
+    if(isDraw){
+        scale /=1.2;
+        if(pelotaY == 40){
+            funcion_sin(scale, translatePos);
+        }
+        else if(pelotaY == 60){
+            funcion_cos(scale, translatePos);
+        }
+        else if(pelotaY == 80){
+            funcion_pow(scale, translatePos);
+        }
+        else{
+            alert('Error!! revisar la variable pelotaY');
+        }
+    }
+}
+
+window.addEventListener( "load" , _init, false);

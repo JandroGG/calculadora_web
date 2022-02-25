@@ -15,6 +15,12 @@
         </canvas>
         <table id="teclado">
             <tr>
+                <td><input type="button" value="+" id="mas"></td>
+                <td><input type="button" value="-" id="menos"></td>
+                <td><input type="button" value=" " id="no"></td>
+                <td><input type="button" value=" " id="no"></td>
+            </tr>
+            <tr>
                 <td><input type="button" value="Up" id="Up"></td>
                 <td><input type="button" value="Dwn" id="Dwn"></td>
                 <td><input type="button" value="Ok" id="Ok"></td>
@@ -30,7 +36,7 @@
                 <td><input type="button" value="Sqrt" id="sqrt"></td>
                 <td><input type="button" value="Sqr" id="sqr"></td>
                 <td><input type="button" value="1/x" id="inv"></td>
-                <td><input type="button" value="f(x)" id="func" onclick="graphs()"></td>
+                <td><input type="button" value="f(x)" id="func" onclick="_initGraphs()"></td>
             </tr>
             <tr>
                 <td><input type="button" value="7" id="numero7"></td>
@@ -58,8 +64,6 @@
             </tr>
         </table>
     </div>
-
-
 
     <script src="jsCalc.js" ></script>
 </body>
