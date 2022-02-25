@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Paint</title>
+    <link rel="stylesheet" href="estilos_paint.css"/>
+</head>
+
+<body>
+    <section id="principal">
+        <h2>MI propio PAINT</h2>
+        <canvas id="myCanvas" width="800" height="400">
+        Your browser does not support the canvas element.
+        </canvas>
+        
+        <div id="section1">
+            <nav id="botonera">
+                <div id="botoncolor">
+                    <div>Color:</div>
+                    <div><input type="color" id="colores"></div>
+                </div>
+                <div id="sep"></div>
+                <div id="boton1">
+                    <div id="cursortxt"> Tamaño </div>
+                    <div><input type="number" id="cursor" name="cursor" min="1" max="60" value="8"></div>
+                </div>
+                <div id="sep"></div>
+                <div id="boton1"> 
+                    <div>Nuevo:</div>
+                    <div> <input type="button" value="Nuevo" id="nuevo"></div>
+                </div>
+                <div id="sep"></div>
+                <div id="boton1">
+                    <div> Forma: </div>
+                    <div > <input type="button" value="Cuadro" id="forma"></div>
+                </div>
+                <div id="sep"></div>
+                <div id="boton1">
+                    <div> Borrador: </div>
+                    <div > <input type="button" value="Borrar" id="borrar"></div>
+                </div>
+                <div id="sep"></div>
+                <div id="boton1">
+                    <div> Circ: </div>
+                    <div > <input type="button" value="Circ" id="circ"></div>
+                </div>
+            </nav>
+        </div>
+        <div id="section2">
+            <table id="table2">
+                <tr><td id="green"></td> <td id="yellow"></td> <td id="blue"></td><td id="red"></td></tr>
+                <tr><td id="gray"></td> <td id="purple"></td> <td id="orange"></td> <td id="violet"></td></tr>
+            </table>
+            <div id="colorespre">Colores Base</div>
+        </div>
+
+        <div id="coord"> X, Y = ( X, Y) </div>
+
+    </section>
+    <script src="java_paint.js" ></script>
+</body>
+</html>
+
+<!-- <tr><td> <input type="color" id="colores"></td>  <td><input type="number" id="micuadro" name="micuadro" min="1" max="60" value="4" list="info"></td> <td><input type="button" value="Borrar" id="borrar"></td><td><input type="button" value="Forma" id="forma"></td></tr> -->
