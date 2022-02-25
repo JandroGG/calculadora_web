@@ -16,10 +16,6 @@ var translatePos = {
     y: 0
 };
 
-var isDraw = false;
-
-//   
-
 function print(numero){
 
     let canvas = document.getElementById("myCanvas");
@@ -176,11 +172,11 @@ function total(){
 
 function reset(){
     activar_teclado_calculadora();
-    let ides = ["mousedown","mouseup","mouseover","mouseout","mousemove"];
+    let events = ["mousedown","mouseup","mouseover","mouseout","mousemove"];
     let funciones = [mouse_down, mouse_up, mouse_over, mouse_out, mouse_move];
 
-    for(let i=0; i<ides.length; i++){
-        document.getElementById("myCanvas").removeEventListener( ides[i] , funciones[i], false);
+    for(let i=0; i<events.length; i++){
+        document.getElementById("myCanvas").removeEventListener( events[i] , funciones[i], false);
     }
 
     ides = ["Up","Dwn","Ok","Esc", "mas", "menos"];
@@ -189,12 +185,10 @@ function reset(){
         document.getElementById(ides[i]).removeEventListener( "click" , funciones[i], false);
     }
     
-
     let canvas = document.getElementById("myCanvas");
     let ctx = canvas.getContext("2d");
     canvas.style.cursor="default";
-    ctx.fillStyle = "rgb(231, 233, 248)";
-    ctx.fillRect(5, 5, 292, 195);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     resultado = 0;
     sumando = false;
     restando = false;
@@ -231,15 +225,15 @@ function _initGraphs(){
 
     desactivar_teclado_calculadora();
 
-    let ides = ["mousedown","mouseup","mouseover","mouseout","mousemove"];
+    let events = ["mousedown","mouseup","mouseover","mouseout","mousemove"];
     let funciones = [mouse_down, mouse_up, mouse_over, mouse_out, mouse_move];
 
-    for(let i=0; i<ides.length; i++){
-        document.getElementById("myCanvas").addEventListener( ides[i] , funciones[i], false);
+    for(let i=0; i<events.length; i++){
+        document.getElementById("myCanvas").addEventListener( events[i] , funciones[i], false);
     }
 
     ides = ["Up","Dwn","Ok","Esc", "mas", "menos"];
-    funciones = [up, down, okey, esc, aumentar, disminuir]; //, arriba, abajo, derecha, izquierda];
+    funciones = [up, down, okey, esc, aumentar, disminuir];
 
     for(let i=0; i<ides.length; i++){
         document.getElementById(ides[i]).addEventListener( "click" , funciones[i], false);
@@ -250,12 +244,10 @@ function _initGraphs(){
 function graphs(){
     let canvas = document.getElementById("myCanvas");
     let ctx = canvas.getContext("2d");
+    canvas.style.cursor="Default";
 
-    // canvas.style.cursor="crosshair";
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    /// menu de funciones a graficar:
-    ctx.fillStyle = "rgb(231, 233, 248)";
-    ctx.fillRect(5, 5, 292, 195);
 
     ctx.fillStyle = "black";                        //refresca
     ctx.font = '20px serif';
@@ -275,6 +267,14 @@ function graphs(){
 function esc(){
     pelotaY = 40;
     isDraw = false;
+    startDragOffset = {};
+    mouseDown = false;
+    scale = 1.0;
+    translatePos = {
+        x: 0,
+        y: 0
+    };
+
     graphs();
 
 }
@@ -348,10 +348,10 @@ function dibujar_pelota(){
 
 function okey(){
     if(pelotaY == 40){
-        funcion_sin(scale, translatePos);
+        funcion_sin(scale, translatePos, true);
     }
     else if(pelotaY == 60){
-        funcion_cos(scale, translatePos);
+        funcion_sin(scale, translatePos, false);
     }
     else if(pelotaY == 80){
         funcion_pow(scale, translatePos);
@@ -361,115 +361,74 @@ function okey(){
     }
 }
 
-function funcion_sin(scale, translatePos){
+function funcion_sin(scale, translatePos, isSin){
     let y = 0;
-    let canvas = document.getElementById("myCanvas");
-    let ctx = canvas.getContext("2d");
+    var canvas = document.getElementById("myCanvas");
+    var ctx = canvas.getContext("2d");
+    canvas.style.cursor="crosshair";
 
+    // limpiar 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // preparar
     ctx.save();
-
     ctx.translate(translatePos.x, translatePos.y);
     ctx.scale(scale, scale);
 
-   // ejes coordenados para la funcion sin(x) y cos(x)
-   ctx.beginPath();
-   ctx.moveTo(150, 5);
-   ctx.lineTo(150, 195);
-   ctx.moveTo(145, 50);
-   ctx.lineTo(155, 50);
-   ctx.moveTo(145, 150);
-   ctx.lineTo(155, 150);
-   ctx.moveTo(30, 95);
-   ctx.lineTo(30, 105);
-   ctx.moveTo(60, 95);
-   ctx.lineTo(60, 105);
-   ctx.moveTo(90, 95);
-   ctx.lineTo(90, 105);
-   ctx.moveTo(120, 95);
-   ctx.lineTo(120, 105);
-   ctx.moveTo(180, 95);
-   ctx.lineTo(180, 105);
-   ctx.moveTo(210, 95);
-   ctx.lineTo(210, 105);
-   ctx.moveTo(240, 95);
-   ctx.lineTo(240, 105);
-   ctx.moveTo(270, 95);
-   ctx.lineTo(270, 105);
-   ctx.moveTo(5, 100);
-   ctx.lineTo(295, 100);
-   ctx.closePath();
-   ctx.stroke();
-   // graficar funcion sin(x):
-   for(let i=-20; i<20;i+=0.01){
-       y = Math.sin(i);
-       ctx.fillStyle = "rgba(0, 0, 0, 1)";
-       ctx.fillRect(150 + (20.4*i), (100 - (50*y)), 1, 1); 
-   }
-   ctx.restore();
+    // ejes coordenados para la funcion sin(x) y cos(x)
+    ctx.beginPath();
 
-   isDraw = true;
+    ctx.moveTo(canvas.width/2, -100);
+    ctx.lineTo(canvas.width/2, 300);
+    for(let i=-100; i<300; i+=50){
+        ctx.moveTo((canvas.width/2) - 5, i);
+        ctx.lineTo((canvas.width/2) + 5, i);
+    }
+
+    ctx.moveTo(-700, canvas.height/2);
+    ctx.lineTo(700, canvas.height/2);
+    for(let i=-700; i<700; i+=28){
+        ctx.moveTo(i, (canvas.height/2) - 5);
+        ctx.lineTo(i, (canvas.height/2) + 5);
+    }
+    ctx.closePath();
+    ctx.stroke();
+
+    if(isSin){
+        // graficar funcion sin(x):
+        for(let i=-100; i<100;i+=0.01){
+            y = Math.sin(i);
+            ctx.fillStyle = "rgba(0, 0, 0, 1)";
+            ctx.fillRect(150 + (20.4*i), (canvas.height/2 - (50*y)), 1, 1); 
+        }
+    }
+    else{
+        // graficar funcion cos(x)
+        for(let i=-7; i<7;i+=0.01){
+            y = Math.cos(i);
+            ctx.fillStyle = "rgba(0, 0, 0, 1)";
+            ctx.fillRect(150 + (20.4*i), (100 - (50*y)), 1, 1); 
+        }
+    }
+    ctx.restore();
+    isDraw = true;
 }
 
-function funcion_cos(){
-    let y = 0;
-    let canvas = document.getElementById("myCanvas");
-    let ctx = canvas.getContext("2d");
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.save();
-
-    ctx.translate(translatePos.x, translatePos.y);
-    ctx.scale(scale, scale);
-
-   // ejes coordenados para la funcion sin(x) y cos(x)
-   ctx.beginPath();
-   ctx.moveTo(150, 5);
-   ctx.lineTo(150, 195);
-   ctx.moveTo(145, 50);
-   ctx.lineTo(155, 50);
-   ctx.moveTo(145, 150);
-   ctx.lineTo(155, 150);
-   ctx.moveTo(30, 95);
-   ctx.lineTo(30, 105);
-   ctx.moveTo(60, 95);
-   ctx.lineTo(60, 105);
-   ctx.moveTo(90, 95);
-   ctx.lineTo(90, 105);
-   ctx.moveTo(120, 95);
-   ctx.lineTo(120, 105);
-   ctx.moveTo(180, 95);
-   ctx.lineTo(180, 105);
-   ctx.moveTo(210, 95);
-   ctx.lineTo(210, 105);
-   ctx.moveTo(240, 95);
-   ctx.lineTo(240, 105);
-   ctx.moveTo(270, 95);
-   ctx.lineTo(270, 105);
-   ctx.moveTo(5, 100);
-   ctx.lineTo(295, 100);
-   ctx.closePath();
-   ctx.stroke();
-   for(let i=-7; i<7;i+=0.01){
-       y = Math.cos(i);
-       ctx.fillStyle = "rgba(0, 0, 0, 1)";
-       ctx.fillRect(150 + (20.4*i), (100 - (50*y)), 1, 1); 
-   }
-   ctx.restore();
-   isDraw = true;
+function funcion_cos(scale, translatePos){
+ 
 }
 
-function funcion_pow(){
+function funcion_pow(scale, translatePos){
     let y = 0;
     let canvas = document.getElementById("myCanvas");
     let ctx = canvas.getContext("2d");
+    canvas.style.cursor="crosshair";
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
 
     ctx.translate(translatePos.x, translatePos.y);
     ctx.scale(scale, scale);
-    
+
     ctx.beginPath();
     ctx.moveTo(150, 5);
     ctx.lineTo(150, 195);
@@ -564,10 +523,10 @@ function mouse_move(evt){
         translatePos.x = evt.clientX - startDragOffset.x;
         translatePos.y = evt.clientY - startDragOffset.y;
         if(pelotaY == 40){
-            funcion_sin(scale, translatePos);
+            funcion_sin(scale, translatePos, true);
         }
         else if(pelotaY == 60){
-            funcion_cos(scale, translatePos);
+            funcion_sin(scale, translatePos, false);
         }
         else if(pelotaY == 80){
             funcion_pow(scale, translatePos);
@@ -583,10 +542,10 @@ function aumentar(){
     if(isDraw){
         scale *=1.2;
         if(pelotaY == 40){
-            funcion_sin(scale, translatePos);
+            funcion_sin(scale, translatePos, true);
         }
         else if(pelotaY == 60){
-            funcion_cos(scale, translatePos);
+            funcion_sin(scale, translatePos, false);
         }
         else if(pelotaY == 80){
             funcion_pow(scale, translatePos);
@@ -602,10 +561,10 @@ function disminuir(){
     if(isDraw){
         scale /=1.2;
         if(pelotaY == 40){
-            funcion_sin(scale, translatePos);
+            funcion_sin(scale, translatePos, true);
         }
         else if(pelotaY == 60){
-            funcion_cos(scale, translatePos);
+            funcion_sin(scale, translatePos, false);
         }
         else if(pelotaY == 80){
             funcion_pow(scale, translatePos);

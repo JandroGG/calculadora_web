@@ -53,6 +53,14 @@ input{
     font-weight:bold;
 }
 
+button{
+    width: 72px;
+    height: 30px;
+    color: darkblue;
+    background-color: gainsboro;
+    font-weight:bold; 
+}
+
 #Reset{
     background-color: rgba(211, 37, 7, 0.966);
     color: aliceblue;
